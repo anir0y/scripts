@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Public IP Address Lookup</title>
+    <style>
+        /* General Reset */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* Theme Variables */
+        :root {
+            --bg-color: #121212; /* Dark Mode Background */
+            --text-color: #ffffff; /* Dark Mode Text */
+            --container-bg: rgba(255, 255, 255, 0.1); /* Dark Mode Container */
+            --button-bg: #007bff; /* Button Color */
+            --button-hover: #0056b3; /* Button Hover Color */
+            --error-color: #ff4d4d; /* Error Color */
+        }
+
+        /* Light Mode Variables */
+        [data-theme="light"] {
+            --bg-color: #f4f4f9; /* Light Mode Background */
+            --text-color: #333; /* Light Mode Text */
+            --container-bg: #ffffff; /* Light Mode Container */
+            --button-bg: #007bff; /* Button Color */
+            --button-hover: #0056b3; /* Button Hover Color */
+            --error-color: #ff4d4d; /* Error Color */
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: background-color 0.3s ease, color 0.3s ease;
+            position: relative;
+        }
+
+        /* Navigation Icon */
+        .nav-icon {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            font-size: 24px;
+            cursor: pointer;
+            color: var(--text-color);
+            transition: color 0.3s ease;
+        }
+
+        .nav-icon:hover {
+            color: var(--button-bg);
+        }
+
+        .container {
+            background-color: var(--container-bg);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 20px;
+            width: 90%;
+            max-width: 500px;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+            transition: background-color 0.3s ease;
+        }
+
+        h1 {
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+
+        label {
+            font-size: 16px;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            font-size: 16px;
+            background-color: rgba(255, 255, 255, 0.2);
+            color: var(--text-color);
+            outline: none;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: var(--button-bg);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: var(--button-hover);
+        }
+
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 5px;
+            font-size: 14px;
+            line-height: 1.6;
+            color: var(--text-color);
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        .result p {
+            margin: 5px 0;
+        }
+
+        .error {
+            color: var(--error-color);
+            margin-top: 10px;
+        }
+
+        /* Footer */
+        footer {
+            position: absolute;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 12px;
+            color: var(--text-color);
+            opacity: 0.7;
+        }
+
+        /* Toggle Switch */
+        .theme-toggle {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 14px;
+        }
+
+        .theme-toggle input[type="checkbox"] {
+            appearance: none;
+            width: 40px;
+            height: 20px;
+            background-color: #ccc;
+            border-radius: 10px;
+            position: relative;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .theme-toggle input[type="checkbox"]:checked {
+            background-color: #007bff;
+        }
+
+        .theme-toggle input[type="checkbox"]::before {
+            content: '';
+            position: absolute;
+            width: 16px;
+            height: 16px;
+            background-color: white;
+            border-radius: 50%;
+            top: 2px;
+            left: 2px;
+            transition: transform 0.3s ease;
+        }
+
+        .theme-toggle input[type="checkbox"]:checked::before {
+            transform: translateX(20px);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 600px) {
+            h1 {
+                font-size: 20px;
+            }
+
+            input[type="text"], button {
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body data-theme="dark">
+
+<!-- Navigation Icon -->
+<div class="nav-icon" onclick="location.reload()" title="Home">&#127760; GetIP</div>
+
+<div class="container">
+    <h1>Public IP Address Lookup</h1>
+    <label for="ipAddress">Enter an IP Address:</label>
+    <input type="text" id="ipAddress" placeholder="e.g., 24.48.0.1" readonly>
+    <button id="lookupButton" onclick="enableInput()">Lookup Another IP</button>
+    <button id="submitButton" onclick="fetchUserInfo()" style="display: none;">Submit</button>
+
+    <div id="result" class="result" style="display: none;">
+        <h3>User Information:</h3>
+        <p><strong>IP Address:</strong> <span id="query"></span></p>
+        <p><strong>Country:</strong> <span id="country"></span></p>
+        <p><strong>Region:</strong> <span id="regionName"></span></p>
+        <p><strong>City:</strong> <span id="city"></span></p>
+        <p><strong>Zip Code:</strong> <span id="zip"></span></p>
+        <p><strong>Latitude:</strong> <span id="lat"></span></p>
+        <p><strong>Longitude:</strong> <span id="lon"></span></p>
+        <p><strong>Timezone:</strong> <span id="timezone"></span></p>
+        <p><strong>ISP:</strong> <span id="isp"></span></p>
+        <p><strong>Organization:</strong> <span id="org"></span></p>
+        <p><strong>AS:</strong> <span id="as"></span></p>
+    </div>
+
+    <p id="errorMessage" class="error"></p>
+</div>
+
+<!-- Footer -->
+<footer>Code is written by QWEN Chat 2.5 MAX</footer>
+
+<!-- Theme Toggle -->
+<div class="theme-toggle">
+    <label for="themeSwitch">Light Mode</label>
+    <input type="checkbox" id="themeSwitch" />
+</div>
+
+<script>
+    // Function to detect the user's public IP address
+    function detectUserIP() {
+        const ipInput = document.getElementById('ipAddress');
+        ipInput.value = 'Detecting...';
+
+        // Fetch the user's public IP address from ipify.org
+        fetch('https://api.ipify.org?format=json')
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                // Set the detected IP address in the input field
+                ipInput.value = data.ip;
+
+                // Automatically fetch user info after detecting the IP
+                fetchUserInfo(data.ip);
+            })
+            .catch(error => {
+                // Handle any errors that occur during the fetch
+                ipInput.value = 'Failed to detect IP';
+                document.getElementById('errorMessage').textContent = `Error detecting IP: ${error.message}`;
+            });
+    }
+
+    // Function to enable manual input for a new IP address
+    function enableInput() {
+        const ipInput = document.getElementById('ipAddress');
+        const lookupButton = document.getElementById('lookupButton');
+        const submitButton = document.getElementById('submitButton');
+
+        // Enable the input field
+        ipInput.removeAttribute('readonly');
+        ipInput.value = ''; // Clear the input field
+        ipInput.focus(); // Focus on the input field
+
+        // Hide the "Lookup Another IP" button and show the "Submit" button
+        lookupButton.style.display = 'none';
+        submitButton.style.display = 'block';
+    }
+
+    // Function to fetch user information based on the detected IP
+    function fetchUserInfo(ipAddress = null) {
+        // If no IP is provided, use the one in the input field
+        const ip = ipAddress || document.getElementById('ipAddress').value.trim();
+
+        // Validate the IP address
+        if (!ip) {
+            document.getElementById('errorMessage').textContent = 'Please enter a valid IP address.';
+            return;
+        }
+
+        // Clear previous results and error messages
+        document.getElementById('result').style.display = 'none';
+        document.getElementById('errorMessage').textContent = '';
+
+        // API URL with the fields parameter
+        const url = `http://ip-api.com/json/${ip}?fields=21229343`;
+
+        // Fetch data from the API
+        fetch(url)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.status === 'success') {
+                    // Display the result
+                    document.getElementById('query').textContent = data.query || 'N/A';
+                    document.getElementById('country').textContent = data.country || 'N/A';
+                    document.getElementById('regionName').textContent = data.regionName || 'N/A';
+                    document.getElementById('city').textContent = data.city || 'N/A';
+                    document.getElementById('zip').textContent = data.zip || 'N/A';
+                    document.getElementById('lat').textContent = data.lat || 'N/A';
+                    document.getElementById('lon').textContent = data.lon || 'N/A';
+                    document.getElementById('timezone').textContent = data.timezone || 'N/A';
+                    document.getElementById('isp').textContent = data.isp || 'N/A';
+                    document.getElementById('org').textContent = data.org || 'N/A';
+                    document.getElementById('as').textContent = data.as || 'N/A';
+
+                    // Show the result section
+                    document.getElementById('result').style.display = 'block';
+
+                    // Re-enable the "Lookup Another IP" button and hide the "Submit" button
+                    const lookupButton = document.getElementById('lookupButton');
+                    const submitButton = document.getElementById('submitButton');
+                    lookupButton.style.display = 'block';
+                    submitButton.style.display = 'none';
+
+                    // Make the input field readonly again
+                    document.getElementById('ipAddress').setAttribute('readonly', true);
+                } else {
+                    // Show error message from the API
+                    document.getElementById('errorMessage').textContent = `Error: ${data.message}`;
+                }
+            })
+            .catch(error => {
+                // Handle any errors that occur during the fetch
+                document.getElementById('errorMessage').textContent = `An error occurred: ${error.message}`;
+            });
+    }
+
+    // Automatically detect the user's public IP when the page loads
+    window.onload = detectUserIP;
+
+    // Theme Toggle Logic
+    const themeSwitch = document.getElementById('themeSwitch');
+    themeSwitch.addEventListener('change', () => {
+        const currentTheme = document.body.getAttribute('data-theme');
+        const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+        document.body.setAttribute('data-theme', newTheme);
+        localStorage.setItem('theme', newTheme); // Save theme preference
+    });
+
+    // Load Saved Theme Preference
+    const savedTheme = localStorage.getItem('theme') || 'dark';
+    document.body.setAttribute('data-theme', savedTheme);
+    themeSwitch.checked = savedTheme === 'light';
+</script>
+
+</body>
+</html>
