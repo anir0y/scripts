@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="author" content="AnimeshRoy (@anir0y)">
+    <meta name="description" content="IP and Network Information Logger">
+    <title>IP & Network Logger</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #f0f0f0;
+        }
+        .container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .info-box {
+            margin: 10px 0;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Network Information Logger</h1>
+        <button onclick="getNetworkInfo()">Get Network Info</button>
+        <div id="ipInfo" class="info-box"></div>
+        <div id="networkInfo" class="info-box"></div>
+    </div>
+
+    <script>
+        async function getNetworkInfo() {
+            // Get IP Information
+            try {
+                const ipResponse = await fetch('https://api.ipify.org?format=json');
+                const ipData = await ipResponse.json();
+                document.getElementById('ipInfo').innerHTML = `
+                    <h3>IP Information:</h3>
+                    <p>Public IP: ${ipData.ip}</p>
+                `;
+
+                // Get additional IP details
+                const detailsResponse = await fetch(`https://ipapi.co/${ipData.ip}/json/`);
+                const details = await detailsResponse.json();
+                document.getElementById('ipInfo').innerHTML += `
+                    <p>Location: ${details.city}, ${details.region}, ${details.country_name}</p>
+                    <p>ISP: ${details.org}</p>
+                `;
+            } catch (error) {
+                document.getElementById('ipInfo').innerHTML = `<p>Error fetching IP info: ${error.message}</p>`;
+            }
+
+            // Get WiFi Information (requires HTTPS and user permission)
+            if (navigator.permissions) {
+                try {
+                    const permission = await navigator.permissions.query({ name: 'network-information' });
+                    if (permission.state === 'granted') {
+                        const connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+                        document.getElementById('networkInfo').innerHTML = `
+                            <h3>Network Information:</h3>
+                            <p>Connection Type: ${connection.type}</p>
+                            <p>Effective Type: ${connection.effectiveType}</p>
+                            <p>Downlink: ${connection.downlink} Mbps</p>
+                            <p>RTT: ${connection.rtt} ms</p>
+                        `;
+                    } else {
+                        document.getElementById('networkInfo').innerHTML = `
+                            <h3>Network Information:</h3>
+                            <p>Permission not granted to access network information</p>
+                        `;
+                    }
+                } catch (error) {
+                    document.getElementById('networkInfo').innerHTML = `
+                        <h3>Network Information:</h3>
+                        <p>Network information not available: ${error.message}</p>
+                    `;
+                }
+            }
+
+            // Log timestamp
+            const timestamp = new Date().toISOString();
+            console.log(`Log recorded at: ${timestamp}`);
+        }
+    </script>
+</body>
+</html>
