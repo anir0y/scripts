@@ -3,9 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="author" content="AnimeshRoy (@anir0y)">
+    <meta name="description" content="A simple and secure IP address lookup tool that provides detailed information about any IP address, including geolocation, ISP, and network details. Features dark/light mode and bot protection.">
     <title>Public IP Address Lookup</title>
     <meta http-equiv="Content-Security-Policy" content="downgrade-secure-requests">
-
+    <script src="https://www.google.com/recaptcha/api.js?render=6LcSV48qAAAAAM6snEXZd57ePDOtv05HWAIZathr"></script>
+    
     <style>
         /* General Reset */
         * {
@@ -208,7 +211,7 @@
     <label for="ipAddress">Enter an IP Address:</label>
     <input type="text" id="ipAddress" placeholder="Detecting your IP..." readonly>
     <button id="lookupButton" onclick="enableInput()">Lookup Another IP</button>
-    <button id="submitButton" onclick="fetchUserInfo()" style="display: none;">Submit</button>
+    <button id="submitButton" onclick="validateAndSubmit()" style="display: none;">Submit</button>
 
     <div id="result" class="result" style="display: none;">
         <h3>User Information:</h3>
@@ -271,15 +274,31 @@
         const ipInput = document.getElementById('ipAddress');
         const lookupButton = document.getElementById('lookupButton');
         const submitButton = document.getElementById('submitButton');
+        const captchaDiv = document.querySelector('.g-recaptcha');
 
         // Enable the input field
         ipInput.removeAttribute('readonly');
         ipInput.value = ''; // Clear the input field
         ipInput.focus(); // Focus on the input field
 
-        // Hide the "Lookup Another IP" button and show the "Submit" button
+        // Hide the "Lookup Another IP" button and show the "Submit" button and captcha
         lookupButton.style.display = 'none';
         submitButton.style.display = 'block';
+        captchaDiv.style.display = 'flex';
+    }
+
+    // Function to validate reCAPTCHA and submit
+    function validateAndSubmit() {
+        grecaptcha.execute('6LcSV48qAAAAAM6snEXZd57ePDOtv05HWAIZathr', {action: 'submit'})
+            .then(function(token) {
+                // You can send this token to your backend for verification if needed
+                // For client-side only, we'll proceed with the IP lookup
+                fetchUserInfo();
+            })
+            .catch(error => {
+                document.getElementById('errorMessage').textContent = 'reCAPTCHA verification failed';
+                console.error('reCAPTCHA Error:', error);
+            });
     }
 
     // Function to fetch user information based on the detected IP
