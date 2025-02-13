@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
     <title>Public IP Address Lookup</title>
+    <meta http-equiv="Content-Security-Policy" content="downgrade-secure-requests">
+
     <style>
         /* General Reset */
         * {
@@ -200,12 +201,12 @@
 <body data-theme="dark">
 
 <!-- Navigation Icon -->
-<div class="nav-icon" onclick="location.reload()" title="Home">&#127760; GetIP</div>
+<div class="nav-icon" onclick="location.reload()" title="Home">&#127760;</div>
 
 <div class="container">
     <h1>Public IP Address Lookup</h1>
     <label for="ipAddress">Enter an IP Address:</label>
-    <input type="text" id="ipAddress" placeholder="e.g., 24.48.0.1" readonly>
+    <input type="text" id="ipAddress" placeholder="Detecting your IP..." readonly>
     <button id="lookupButton" onclick="enableInput()">Lookup Another IP</button>
     <button id="submitButton" onclick="fetchUserInfo()" style="display: none;">Submit</button>
 
@@ -261,6 +262,7 @@
                 // Handle any errors that occur during the fetch
                 ipInput.value = 'Failed to detect IP';
                 document.getElementById('errorMessage').textContent = `Error detecting IP: ${error.message}`;
+                console.error('Error fetching public IP:', error);
             });
     }
 
@@ -295,8 +297,8 @@
         document.getElementById('result').style.display = 'none';
         document.getElementById('errorMessage').textContent = '';
 
-        // API URL with the fields parameter
-        const url = `https://ip-api.com/json/${ip}?fields=21229343`;
+        // API URL for ipapi.co
+        const url = `https://ipapi.co/${ip}/json/`;
 
         // Fetch data from the API
         fetch(url)
@@ -307,19 +309,19 @@
                 return response.json();
             })
             .then(data => {
-                if (data.status === 'success') {
+                if (!data.error) {
                     // Display the result
-                    document.getElementById('query').textContent = data.query || 'N/A';
-                    document.getElementById('country').textContent = data.country || 'N/A';
-                    document.getElementById('regionName').textContent = data.regionName || 'N/A';
+                    document.getElementById('query').textContent = data.ip || 'N/A';
+                    document.getElementById('country').textContent = data.country_name || 'N/A';
+                    document.getElementById('regionName').textContent = data.region || 'N/A';
                     document.getElementById('city').textContent = data.city || 'N/A';
-                    document.getElementById('zip').textContent = data.zip || 'N/A';
-                    document.getElementById('lat').textContent = data.lat || 'N/A';
-                    document.getElementById('lon').textContent = data.lon || 'N/A';
+                    document.getElementById('zip').textContent = data.postal || 'N/A';
+                    document.getElementById('lat').textContent = data.latitude || 'N/A';
+                    document.getElementById('lon').textContent = data.longitude || 'N/A';
                     document.getElementById('timezone').textContent = data.timezone || 'N/A';
-                    document.getElementById('isp').textContent = data.isp || 'N/A';
+                    document.getElementById('isp').textContent = data.org || 'N/A';
                     document.getElementById('org').textContent = data.org || 'N/A';
-                    document.getElementById('as').textContent = data.as || 'N/A';
+                    document.getElementById('as').textContent = data.asn || 'N/A';
 
                     // Show the result section
                     document.getElementById('result').style.display = 'block';
@@ -340,6 +342,7 @@
             .catch(error => {
                 // Handle any errors that occur during the fetch
                 document.getElementById('errorMessage').textContent = `An error occurred: ${error.message}`;
+                console.error('Error fetching IP information:', error);
             });
     }
 
