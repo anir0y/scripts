@@ -74,14 +74,30 @@
                 try {
                     const permission = await navigator.permissions.query({ name: 'network-information' });
                     if (permission.state === 'granted') {
-                        const connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
-                        document.getElementById('networkInfo').innerHTML = `
-                            <h3>Network Information:</h3>
-                            <p>Connection Type: ${connection.type}</p>
-                            <p>Effective Type: ${connection.effectiveType}</p>
-                            <p>Downlink: ${connection.downlink} Mbps</p>
-                            <p>RTT: ${connection.rtt} ms</p>
-                        `;
+                        // Get WiFi Information
+                        try {
+                            const connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+                            if (connection) {
+                                document.getElementById('networkInfo').innerHTML = `
+                                    <h3>Network Information:</h3>
+                                    <p>Connection Type: ${connection.type || 'unknown'}</p>
+                                    <p>Effective Type: ${connection.effectiveType || 'unknown'}</p>
+                                    <p>Downlink: ${connection.downlink || 'unknown'} Mbps</p>
+                                    <p>RTT: ${connection.rtt || 'unknown'} ms</p>
+                                    <p>Save Data Mode: ${connection.saveData ? 'Enabled' : 'Disabled'}</p>
+                                `;
+                            } else {
+                                document.getElementById('networkInfo').innerHTML = `
+                                    <h3>Network Information:</h3>
+                                    <p>Network information not available in this browser</p>
+                                `;
+                            }
+                        } catch (error) {
+                            document.getElementById('networkInfo').innerHTML = `
+                                <h3>Network Information:</h3>
+                                <p>Error accessing network information: ${error.message}</p>
+                            `;
+                        }
                     } else {
                         document.getElementById('networkInfo').innerHTML = `
                             <h3>Network Information:</h3>
