@@ -80,7 +80,15 @@
                         <p>Downlink: ${connection.downlink || 'unknown'} Mbps</p>
                         <p>RTT: ${connection.rtt || 'unknown'} ms</p>
                         <p>Save Data Mode: ${connection.saveData ? 'Enabled' : 'Disabled'}</p>
+                        <p>Max Downlink: ${connection.downlinkMax || 'unknown'} Mbps</p>
+                        <p>Online Status: ${navigator.onLine ? 'Connected' : 'Disconnected'}</p>
                     `;
+            
+                    // Listen for connection changes
+                    connection.addEventListener('change', function() {
+                        console.log('Network connection changed');
+                        getNetworkInfo();
+                    });
                 } else {
                     document.getElementById('networkInfo').innerHTML = `
                         <h3>Network Information:</h3>
