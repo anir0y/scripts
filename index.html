@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="author" content="AnimeshRoy (@anir0y)">
+    <meta name="description" content="Collection of useful web tools and utilities">
+    <title>Web Tools Collection</title>
+    <style>
+        :root {
+            --primary-color: #007bff;
+            --secondary-color: #6c757d;
+            --success-color: #28a745;
+            --bg-dark: #121212;
+            --bg-light: #f8f9fa;
+            --text-dark: #333;
+            --text-light: #fff;
+            --card-dark: #1e1e1e;
+            --card-light: #fff;
+        }
+
+        [data-theme="light"] {
+            --bg-color: var(--bg-light);
+            --text-color: var(--text-dark);
+            --card-bg: var(--card-light);
+            --card-shadow: rgba(0, 0, 0, 0.1);
+        }
+
+        [data-theme="dark"] {
+            --bg-color: var(--bg-dark);
+            --text-color: var(--text-light);
+            --card-bg: var(--card-dark);
+            --card-shadow: rgba(255, 255, 255, 0.05);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            transition: all 0.3s ease;
+        }
+
+        header {
+            text-align: center;
+            padding: 3rem 1rem;
+            position: relative;
+        }
+
+        .theme-toggle {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .theme-toggle input[type="checkbox"] {
+            appearance: none;
+            width: 40px;
+            height: 20px;
+            background-color: #ccc;
+            border-radius: 10px;
+            position: relative;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .theme-toggle input[type="checkbox"]:checked {
+            background-color: var(--primary-color);
+        }
+
+        .theme-toggle input[type="checkbox"]::before {
+            content: '';
+            position: absolute;
+            width: 16px;
+            height: 16px;
+            background-color: white;
+            border-radius: 50%;
+            top: 2px;
+            left: 2px;
+            transition: transform 0.3s ease;
+        }
+
+        .theme-toggle input[type="checkbox"]:checked::before {
+            transform: translateX(20px);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: var(--primary-color);
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            color: var(--secondary-color);
+            margin-bottom: 3rem;
+        }
+
+        .tools-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            padding: 20px 0;
+        }
+
+        .tool-card {
+            background-color: var(--card-bg);
+            border-radius: 10px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 6px var(--card-shadow);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .tool-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 12px var(--card-shadow);
+        }
+
+        .tool-card h2 {
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+            font-size: 1.5rem;
+        }
+
+        .tool-card p {
+            margin-bottom: 1.5rem;
+            color: var(--text-color);
+        }
+
+        .tool-card a {
+            display: inline-block;
+            padding: 0.8rem 1.5rem;
+            background-color: var(--primary-color);
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
+
+        .tool-card a:hover {
+            background-color: #0056b3;
+        }
+
+        footer {
+            text-align: center;
+            padding: 1rem;
+            color: var(--secondary-color);
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background-color: var(--card-bg);
+            box-shadow: 0 -2px 10px var(--card-shadow);
+            z-index: 100;
+        }
+
+        main {
+            padding-bottom: 5rem; /* Add padding to prevent content from being hidden behind footer */
+        }
+
+        @media (max-width: 768px) {
+            .tools-grid {
+                grid-template-columns: 1fr;
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+
+            .subtitle {
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body data-theme="dark">
+    <header>
+        <div class="theme-toggle">
+            <label for="themeSwitch">Theme</label>
+            <input type="checkbox" id="themeSwitch">
+        </div>
+        <h1>Web Tools Collection</h1>
+        <p class="subtitle">A collection of useful web utilities and tools</p>
+    </header>
+
+    <main class="container">
+        <div class="tools-grid">
+            <div class="tool-card">
+                <h2>Anker Prime BLE Utility</h2>
+                <p>A comprehensive tool for managing and monitoring Anker Prime devices via Bluetooth Low Energy (BLE). Features include device connection, power status monitoring, and advanced settings configuration.</p>
+                <a href="AnkerPrimeWebBle.html">Launch Tool</a>
+            </div>
+
+            <div class="tool-card">
+                <h2>IP Address Lookup</h2>
+                <p>A secure and user-friendly IP address lookup tool that provides detailed information including geolocation, ISP details, and network information. Features dark/light mode and bot protection.</p>
+                <a href="getip.html">Launch Tool</a>
+            </div>
+
+            <div class="tool-card">
+                <h2>Network Information Logger</h2>
+                <p>Monitor and log your network connectivity details including connection type, speed, and status. Get real-time updates about your network performance and connection quality.</p>
+                <a href="netinfo.html">Launch Tool</a>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <p>Created by AnimeshRoy (@anir0y)</p>
+    </footer>
+
+    <script>
+        // Theme Toggle Logic
+        const themeSwitch = document.getElementById('themeSwitch');
+        
+        // Load saved theme preference
+        const savedTheme = localStorage.getItem('theme') || 'dark';
+        document.body.setAttribute('data-theme', savedTheme);
+        themeSwitch.checked = savedTheme === 'light';
+
+        // Theme toggle event listener
+        themeSwitch.addEventListener('change', () => {
+            const currentTheme = document.body.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            document.body.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+        });
+    </script>
+</body>
+</html>
